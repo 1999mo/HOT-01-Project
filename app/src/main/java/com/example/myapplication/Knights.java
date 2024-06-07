@@ -50,6 +50,17 @@ public class Knights {
 
         stand.setBounds((int)x, (int)y, (int)x + 100, (int)y + 100);
         stand.draw(canvas);
+
+        /*
+        Make a empty circle if this is selected for indication
+         */
+        if(selected) {
+            Paint paint = new Paint();
+            paint.setColor(Color.rgb(255, 0, 0));
+            paint.setStrokeWidth(5);
+            paint.setStyle(Paint.Style.STROKE);
+            canvas.drawCircle(x + 50, y + 50, 100, paint);
+        }
     }
 
     public void setActionDown() {

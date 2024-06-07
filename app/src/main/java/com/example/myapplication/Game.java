@@ -83,11 +83,23 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
         //drawUPS(canvas);
         //drawFPS(canvas);
         //drawCoordinate(canvas);
+        drawSwitchButton(canvas);
 
         //draw each object
         for (Knights knight : knights) {
             knight.draw(canvas);
         }
+    }
+
+    private void drawSwitchButton(Canvas canvas) {
+        Paint paint = new Paint();
+        int color = ContextCompat.getColor(context, R.color.magenta);
+        paint.setColor(color);
+        paint.setStrokeWidth(10);
+
+        canvas.drawCircle(100, 100, 100, paint);
+        paint.setTextSize(50);
+        canvas.drawText("Click : " + toggleSwitch, 100, 300, paint);
     }
 
     public void drawUPS(Canvas canvas) {
@@ -117,6 +129,7 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
         canvas.drawText(coordinate, 100, 100, paint);
     }
 
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         switch(event.getAction()) {
@@ -144,6 +157,11 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
                         selectKnight = -1;
                     }
                 }
+
+                //Toggle Switch
+                if (switchClicked()) {
+                    toggleSwitch = !toggleSwitch;
+                }
                 break;
             case MotionEvent.ACTION_MOVE:
                 if (!toggleSwitch) {
@@ -163,6 +181,16 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
                 break;
         }
         return true;
+    }
+
+    private boolean switchClicked() {
+        double distance = Math.sqrt(Math.pow((X - 100), 2) + Math.pow((Y - 100), 2));
+        if(distance <= 100) {
+            return true;
+        }
+        else {
+            return false;
+        }
     }
 
     public void update() {
