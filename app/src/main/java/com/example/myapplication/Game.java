@@ -28,11 +28,11 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
     private Context context;
     private Knights[] knights;
     private Drawable background;
-    private boolean[] existList;
     private float X = 0;
     private float Y = 0;
 
-    private boolean toggleSwitch = false;
+    private boolean toggleSwitch = true;
+    private int selectKnight = -1;
 
     public Game(Context context) {
         super(context);
@@ -49,11 +49,6 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
         knights[1] = new Knights(100, 500, context);
         knights[2] = new Knights(500, 100, context);
         background = context.getResources().getDrawable(R.drawable.background);
-
-        existList = new boolean[9];
-        for(boolean i : existList) {
-            i = false;
-        }
 
         setFocusable(true);
     }
@@ -126,13 +121,27 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
     public boolean onTouchEvent(MotionEvent event) {
         switch(event.getAction()) {
             case MotionEvent.ACTION_DOWN:
+                X = event.getX();
+                Y = event.getY();
                 if (!toggleSwitch) {
-                    X = event.getX();
-                    Y = event.getY();
                     for (Knights knight : knights) {
-                        if (knight.isTouched(event.getX(), event.getY())) {
+                        if (knight.isTouched(X, Y)) {
                             knight.takeActionDown();
                         }
+                    }
+                }
+                else {
+                    if (selectKnight == -1) {
+                        for (int i = 0; i < knights.length; i++) {
+                            if (knights[i].isTouched(X, Y)) {
+                                knights[i].selectKnight();
+                                selectKnight = i;
+                            }
+                        }
+                    }
+                    else {
+                        knights[selectKnight].unselectKnight(X, Y);
+                        selectKnight = -1;
                     }
                 }
                 break;
@@ -148,7 +157,7 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
             case MotionEvent.ACTION_UP:
                 if (!toggleSwitch) {
                     for (Knights knight : knights) {
-                        knight.setActionDown(existList);
+                        knight.setActionDown();
                     }
                 }
                 break;

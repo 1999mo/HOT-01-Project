@@ -11,7 +11,7 @@ public class Knights {
      * Need the previous x, y to get it back - done
      * Change the rectangle for a better model - done, but if there is a better model, that can be great
      * Need another button for the change of drag and drop <-> click and point
-     * Need to make a field - the most low row is done
+     * Need to make a field - the most low row is done - can't be done because the x, y is different for different mobile
      * Make settings
      * Make Backgrounds for the first and second layout
      */
@@ -29,6 +29,7 @@ public class Knights {
     private int currentIndex = -1;
     private final float[] xPosition = {550.0F, 685.0F, 820.0F, 960.0F, 1100.0F, 1240.0F, 1385.0F, 1525.0F, 1670.0F};
     private Drawable stand;
+    private boolean selected;
 
     public Knights(float x, float y, Context context) {
         this.x = x;
@@ -36,6 +37,7 @@ public class Knights {
         prevX = this.x;
         prevY = this.y;
         stand = context.getResources().getDrawable(R.drawable.garen);
+        selected = false;
     }
 
     public void draw(Canvas canvas) {
@@ -50,16 +52,8 @@ public class Knights {
         stand.draw(canvas);
     }
 
-    public void setActionDown(boolean[] availableList) {
-        if(actionDown) {
-            if (!positionValid(availableList)) {
-                setPosition(prevX, prevY);
-            } else {
-                setPosition(xPosition[currentIndex], 910);
-                setPreviousPosition();
-            }
-            actionDown = false;
-        }
+    public void setActionDown() {
+        actionDown = false;
     }
 
     public boolean getActionDown() {
@@ -126,5 +120,16 @@ public class Knights {
         }
 
         return -1;
+    }
+
+    public void selectKnight() {
+        selected = true;
+    }
+
+    public void unselectKnight(float x, float y) {
+        if (selected) {
+            setPosition(x, y);
+            selected = false;
+        }
     }
 }
