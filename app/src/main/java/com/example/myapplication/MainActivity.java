@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.animation.Animator;
 import android.app.Activity;
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.view.WindowManager;
 import android.view.Window;
@@ -25,6 +26,8 @@ public class MainActivity extends Activity {
         game = new Game(this);
         //Set content view to game, so that objects in the game class can be rendered to the screen
         setContentView(game);
+
+        setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
     @Override
