@@ -32,6 +32,7 @@ public class Knights {
     private int currentIndex = -1;
     private final float[] xPosition = {550.0F, 685.0F, 820.0F, 960.0F, 1100.0F, 1240.0F, 1385.0F, 1525.0F, 1670.0F};
     private Drawable stand;
+    private Drawable model;
     private boolean selected;
     private String name = "garen";
 
@@ -48,6 +49,8 @@ public class Knights {
         Resources res = context.getResources();
         int resourceId = res.getIdentifier(name, "drawable", context.getPackageName());
         stand = ContextCompat.getDrawable(context, resourceId);
+        resourceId = res.getIdentifier(name + "model", "drawable", context.getPackageName());
+        model = ContextCompat.getDrawable(context, resourceId);
         selected = false;
     }
 
@@ -75,6 +78,8 @@ public class Knights {
             /*
             Make a info tab on the left
              */
+
+            /*
             paint.setColor(Color.rgb(255, 0, 144));
             paint.setStyle(Paint.Style.FILL_AND_STROKE);
             canvas.drawRect(0, 100, 0 + 300, 100 + 800, paint);
@@ -86,6 +91,15 @@ public class Knights {
             for(int i = 0; i < 2; i++) {
                 canvas.drawText(attributes[i], 50, 350 + i * 100, paint);
             }
+
+             */
+
+
+            int cx = canvas.getWidth();
+            int cy = canvas.getHeight();
+            model.setBounds(0 * cx / 2220, 150 * cy / 1014, (0 + 400) * cx / 2220, (200 + 800) * cy / 1014);
+            model.draw(canvas);
+
         }
     }
 

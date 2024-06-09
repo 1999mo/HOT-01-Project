@@ -164,7 +164,7 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
     }
 
     private void drawShop(Canvas canvas) {
-        shop.setBounds((int) (100 * cx / 2220), (int) (50 * cy / 1014), (int) ((100 + 2000) * cx / 2220), (int) ((50 + 250) * cy / 1014));
+        shop.setBounds((int) (100 * cx / 2220), (int) (0 * cy / 1014), (int) ((100 + 2000) * cx / 2220), (int) ((0 + 300) * cy / 1014));
         shop.draw(canvas);
     }
 
