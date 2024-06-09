@@ -1,10 +1,13 @@
 package com.example.myapplication;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.drawable.Drawable;
+
+import androidx.core.content.ContextCompat;
 
 public class Knights {
     /**
@@ -30,13 +33,21 @@ public class Knights {
     private final float[] xPosition = {550.0F, 685.0F, 820.0F, 960.0F, 1100.0F, 1240.0F, 1385.0F, 1525.0F, 1670.0F};
     private Drawable stand;
     private boolean selected;
+    private String name = "garen";
 
-    public Knights(float x, float y, Context context) {
+    private String[] attributes;
+
+    public Knights(float x, float y, String name, String[] attributes, Context context) {
         this.x = x;
         this.y = y;
+        this.name = name;
         prevX = this.x;
         prevY = this.y;
-        stand = context.getResources().getDrawable(R.drawable.garen);
+        this.attributes = attributes;
+
+        Resources res = context.getResources();
+        int resourceId = res.getIdentifier(name, "drawable", context.getPackageName());
+        stand = ContextCompat.getDrawable(context, resourceId);
         selected = false;
     }
 
@@ -51,15 +62,30 @@ public class Knights {
         stand.setBounds((int)x, (int)y, (int)x + 100, (int)y + 100);
         stand.draw(canvas);
 
-        /*
-        Make a empty circle if this is selected for indication
-         */
         if(selected) {
+            /*
+            Make a empty circle if this is selected for indication
+             */
             Paint paint = new Paint();
             paint.setColor(Color.rgb(255, 0, 0));
             paint.setStrokeWidth(5);
             paint.setStyle(Paint.Style.STROKE);
             canvas.drawCircle(x + 50, y + 50, 100, paint);
+
+            /*
+            Make a info tab on the left
+             */
+            paint.setColor(Color.rgb(255, 0, 144));
+            paint.setStyle(Paint.Style.FILL_AND_STROKE);
+            canvas.drawRect(0, 100, 0 + 300, 100 + 800, paint);
+
+            paint.setColor(Color.rgb(0, 0, 0));
+            paint.setStrokeWidth(2);
+            paint.setTextSize(40);
+            canvas.drawText(name, 50, 250, paint);
+            for(int i = 0; i < 2; i++) {
+                canvas.drawText(attributes[i], 50, 350 + i * 100, paint);
+            }
         }
     }
 

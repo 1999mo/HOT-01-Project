@@ -2,6 +2,7 @@ package com.example.myapplication;
 
 import android.content.Context;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.graphics.drawable.Drawable;
@@ -29,12 +30,18 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
     private Knights[] knights;
     private Drawable background;
     private Drawable mainMenu;
+    private Drawable shop;
+    private Drawable subMenuImage;
+    //private Drawable settings;
     private float X = 0;
     private float Y = 0;
 
     private boolean toggleSwitch = true;
     private int selectKnight = -1;
     private boolean stageActivated = false;
+    private boolean shopOpen = false;
+    private boolean settingsMenu = false;
+    private boolean subMenu = false;
 
     public Game(Context context) {
         super(context);
@@ -47,11 +54,14 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
         gameLoop = new GameLoop(this, surfaceHolder);
 
         knights = new Knights[3];
-        knights[0] = new Knights(500, 500, context);
-        knights[1] = new Knights(100, 500, context);
-        knights[2] = new Knights(500, 100, context);
+        knights[0] = new Knights(1000, 800, "garen", new String[]{"Noble", "Knight"}, context);
+        knights[1] = new Knights(1200, 800, "lux", new String[]{"Star Guardian", "Spellslinger"}, context);
+        knights[2] = new Knights(1400, 800, "katarina", new String[]{"Sinister", "Assasin"},context);
         background = context.getResources().getDrawable(R.drawable.background);
-        mainMenu = context.getResources().getDrawable(R.drawable.tempmenu);
+        mainMenu = context.getResources().getDrawable(R.drawable.mainmenu);
+        shop = context.getResources().getDrawable(R.drawable.shop);
+        subMenuImage = context.getResources().getDrawable(R.drawable.submenu);
+        //settings = context.getResources().getDrawable(R.drawable);
 
         setFocusable(true);
     }
@@ -87,20 +97,78 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
             //drawUPS(canvas);
             //drawFPS(canvas);
             //drawCoordinate(canvas);
-            drawSwitchButton(canvas);
 
             //draw each object
             for (Knights knight : knights) {
                 knight.draw(canvas);
             }
-        } else {
-            Rect imageBounds = canvas.getClipBounds();
 
-            mainMenu.setBounds(imageBounds);
-            mainMenu.draw(canvas);
-            
-            drawMainmenuButton(canvas);
+            //draw shop button
+            if (shopOpen) {
+                drawShop(canvas);
+            } else {
+                if (!settingsMenu) {
+                    drawShopButton(canvas);
+                }
+            }
+
+            if (settingsMenu) {
+                drawSettings(canvas);
+                drawSwitchButton(canvas);
+            } else {
+                if(!shopOpen) {
+                    drawSettingsButton(canvas);
+                }
+            }
+
+        } else {
+            if (!subMenu) {
+                Rect imageBounds = canvas.getClipBounds();
+
+                mainMenu.setBounds(imageBounds);
+                mainMenu.draw(canvas);
+
+                drawMainmenuButton(canvas);
+            } else {
+                Rect imageBounds = canvas.getClipBounds();
+
+                subMenuImage.setBounds(imageBounds);
+                subMenuImage.draw(canvas);
+
+                drawMainmenuButton(canvas);
+            }
         }
+    }
+
+    private void drawSettingsButton(Canvas canvas) {
+        Paint paint = new Paint();
+        int color = ContextCompat.getColor(context, R.color.magenta);
+        paint.setColor(color);
+        paint.setStrokeWidth(10);
+
+        canvas.drawCircle(2000, 150, 100, paint);
+    }
+
+    private void drawSettings(Canvas canvas) {
+        Paint paint = new Paint();
+        paint.setColor(Color.rgb(105, 105, 105));
+        paint.setStrokeWidth(10);
+
+        canvas.drawRoundRect(100, 100, 100 + 2000, 100 + 800, 10, 10, paint);
+    }
+
+    private void drawShop(Canvas canvas) {
+        shop.setBounds(100, 50, 100 + 2000, 50 + 250);
+        shop.draw(canvas);
+    }
+
+    private void drawShopButton(Canvas canvas) {
+        Paint paint = new Paint();
+        int color = ContextCompat.getColor(context, R.color.magenta);
+        paint.setColor(color);
+        paint.setStrokeWidth(10);
+
+        canvas.drawCircle(2000, 850, 100, paint);
     }
 
     private void drawMainmenuButton(Canvas canvas) {
@@ -109,7 +177,7 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
         paint.setColor(color);
         paint.setStrokeWidth(10);
 
-        canvas.drawCircle(1500, 500, 100, paint);
+        canvas.drawCircle(1750, 800, 100, paint);
     }
 
     private void drawSwitchButton(Canvas canvas) {
@@ -118,13 +186,13 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
         paint.setColor(color);
         paint.setStrokeWidth(10);
 
-        canvas.drawCircle(100, 100, 100, paint);
+        canvas.drawCircle(300, 300, 100, paint);
         paint.setTextSize(50);
         if(toggleSwitch) {
-            canvas.drawText("Click and point to move", 100, 300, paint);
+            canvas.drawText("Click and point to move", 300, 500, paint);
         }
         else {
-            canvas.drawText("Drag and drop to move", 100, 300, paint);
+            canvas.drawText("Drag and drop to move", 300, 500, paint);
         }
     }
 
@@ -163,10 +231,43 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
         if(stageActivated) {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
+                    //Settings Menu
+                    if (settingsMenu) {
+                        //Toggle Switch
+                        if (switchClicked()) {
+                            toggleSwitch = !toggleSwitch;
+                            break;
+                        }
+                        //Close Menu
+                        //100, 100, 100 + 2000, 100 + 800
+                        if ((X < 100 || X > 2100) || (Y < 100 || Y > 900)) {
+                            settingsMenu = false;
+                            break;
+                        }
+                    }
+                    else {
+                        if (getDistance(2000, 150) <= 100 && !shopOpen) {
+                            settingsMenu = true;
+                            break;
+                        }
+                    }
+
+                    //Shop button
+                    if (shopOpen) {
+                        shopOpen = false;
+                        break;
+                    } else {
+                        if (getDistance(2000, 850) <= 100 && !settingsMenu) {
+                            shopOpen = true;
+                            break;
+                        }
+                    }
+
                     if (!toggleSwitch) {
                         for (Knights knight : knights) {
                             if (knight.isTouched(X, Y)) {
                                 knight.takeActionDown();
+                                knight.selectKnight();
                             }
                         }
                     } else {
@@ -183,10 +284,6 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
                         }
                     }
 
-                    //Toggle Switch
-                    if (switchClicked()) {
-                        toggleSwitch = !toggleSwitch;
-                    }
                     break;
                 case MotionEvent.ACTION_MOVE:
                     if (!toggleSwitch) {
@@ -201,6 +298,7 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
                     if (!toggleSwitch) {
                         for (Knights knight : knights) {
                             knight.setActionDown();
+                            knight.unselectKnight(X, Y);
                         }
                     }
                     break;
@@ -209,8 +307,13 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
         else {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    if (getDistance(1500, 500) <= 100) {
-                        stageActivated = true;
+                    if (getDistance(1750, 800) <= 100) {
+                        if (!subMenu) {
+                            subMenu = true;
+                        } else {
+                            subMenu = false;
+                            stageActivated = true;
+                        }
                     }
                     break;
             }
@@ -219,7 +322,7 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
     }
 
     private boolean switchClicked() {
-        double distance = getDistance(100, 100);
+        double distance = getDistance(300, 300);
         if(distance <= 100) {
             return true;
         }
