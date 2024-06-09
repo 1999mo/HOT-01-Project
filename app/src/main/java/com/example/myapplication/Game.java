@@ -43,6 +43,9 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
     private boolean settingsMenu = false;
     private boolean subMenu = false;
 
+    float cx;
+    float cy;
+
     public Game(Context context) {
         super(context);
 
@@ -87,6 +90,9 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
     @Override
     public void draw(Canvas canvas) {
         super.draw(canvas);
+
+        cx = canvas.getWidth();
+        cy = canvas.getHeight();
 
         if (stageActivated) {
             Rect imageBounds = canvas.getClipBounds();
@@ -146,7 +152,7 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
         paint.setColor(color);
         paint.setStrokeWidth(10);
 
-        canvas.drawCircle(2000, 150, 100, paint);
+        canvas.drawCircle(2000 * cx / 2220, 150 * cy / 1014, 100, paint);
     }
 
     private void drawSettings(Canvas canvas) {
@@ -154,11 +160,11 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
         paint.setColor(Color.rgb(105, 105, 105));
         paint.setStrokeWidth(10);
 
-        canvas.drawRoundRect(100, 100, 100 + 2000, 100 + 800, 10, 10, paint);
+        canvas.drawRoundRect(100 * cx / 2220, 100 * cy / 1014, (100 + 2000) * cx / 2220, (100 + 800) * cy / 1014, 10, 10, paint);
     }
 
     private void drawShop(Canvas canvas) {
-        shop.setBounds(100, 50, 100 + 2000, 50 + 250);
+        shop.setBounds((int) (100 * cx / 2220), (int) (50 * cy / 1014), (int) ((100 + 2000) * cx / 2220), (int) ((50 + 250) * cy / 1014));
         shop.draw(canvas);
     }
 
@@ -168,7 +174,7 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
         paint.setColor(color);
         paint.setStrokeWidth(10);
 
-        canvas.drawCircle(2000, 850, 100, paint);
+        canvas.drawCircle(2000 * cx / 2220, 850 * cy / 1014, 100, paint);
     }
 
     private void drawMainmenuButton(Canvas canvas) {
@@ -177,7 +183,7 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
         paint.setColor(color);
         paint.setStrokeWidth(10);
 
-        canvas.drawCircle(1750, 800, 100, paint);
+        canvas.drawCircle(1750 * cx / 2220, 800 * cy / 1014, 100, paint);
     }
 
     private void drawSwitchButton(Canvas canvas) {
@@ -186,13 +192,13 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
         paint.setColor(color);
         paint.setStrokeWidth(10);
 
-        canvas.drawCircle(300, 300, 100, paint);
+        canvas.drawCircle(300 * cx / 2220, 300 * cy / 1014, 100, paint);
         paint.setTextSize(50);
         if(toggleSwitch) {
-            canvas.drawText("Click and point to move", 300, 500, paint);
+            canvas.drawText("Click and point to move", 300 * cx / 2220, 500 * cy / 1014, paint);
         }
         else {
-            canvas.drawText("Drag and drop to move", 300, 500, paint);
+            canvas.drawText("Drag and drop to move", 300 * cx / 2220, 500 * cy / 1014, paint);
         }
     }
 
@@ -240,13 +246,13 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
                         }
                         //Close Menu
                         //100, 100, 100 + 2000, 100 + 800
-                        if ((X < 100 || X > 2100) || (Y < 100 || Y > 900)) {
+                        if ((X < (100 * cx / 2220) || X > (2100 * cx / 2220)) || (Y < (100 * cy / 1014) || Y > (900 * cy / 1014))) {
                             settingsMenu = false;
                             break;
                         }
                     }
                     else {
-                        if (getDistance(2000, 150) <= 100 && !shopOpen) {
+                        if (getDistance(2000 * cx / 2220, 150 * cy / 1014) <= 100 && !shopOpen) {
                             settingsMenu = true;
                             break;
                         }
@@ -257,7 +263,7 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
                         shopOpen = false;
                         break;
                     } else {
-                        if (getDistance(2000, 850) <= 100 && !settingsMenu) {
+                        if (getDistance(2000 * cx / 2220, 850 * cy / 1014) <= 100 && !settingsMenu) {
                             shopOpen = true;
                             break;
                         }
@@ -307,7 +313,7 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
         else {
             switch (event.getAction()) {
                 case MotionEvent.ACTION_DOWN:
-                    if (getDistance(1750, 800) <= 100) {
+                    if (getDistance(1750 * cx / 2220, 800 * cy / 1014) <= 100) {
                         if (!subMenu) {
                             subMenu = true;
                         } else {
@@ -322,7 +328,7 @@ class Game extends SurfaceView implements SurfaceHolder.Callback{
     }
 
     private boolean switchClicked() {
-        double distance = getDistance(300, 300);
+        double distance = getDistance(300 * cx / 2220, 300 * cy / 1014);
         if(distance <= 100) {
             return true;
         }
